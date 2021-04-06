@@ -4,7 +4,7 @@ module CellMLModelRepository
 using JSON3, JSONTables, CSV, DataFrames
 using Base.Threads
 
-function curl_metadata(json_path = "data/cellml_exposures.json", csv_path="data/exposures_metadata.csv")
+function curl_metadata(;json_path = "data/cellml_exposures.json", csv_path="data/exposures_metadata.csv")
     run(`curl -sL -H 'Accept: application/vnd.physiome.pmr2.json.1' https://models.physiomeproject.org/search -d '{
            "template": {"data": [
                {"name": "Subject", "value": "CellML Model"},
@@ -21,12 +21,16 @@ function curl_metadata(json_path = "data/cellml_exposures.json", csv_path="data/
 end
 
 "anands preferred method of downloading. no boo boo html parsing"
-function curl_cellml_models(dir = "data/cellml_models")
+function curl_cellml_models(;dir = "data/cellml_models/", csv_path="data/exposures_metadata.csv")
     mkpath(dir)
-    df = curl_metadata()
+    if isfile(csv_path) 
+        df = CSV.read(csv_path, DataFrame)
+    else
+        df = curl_metadata(;csv_path=csv_path)
+    end
     urls = map(x->x[1:end-5], df.href)
     @sync Threads.@threads for url in urls
-        run(`curl $(url) -o "data/cellml_models/$(splitdir(url)[end])"`)
+        download(url, "$(dir)$(splitdir(url)[end])")
     end
 end
 
