@@ -12,7 +12,7 @@ function curl_metadata(;json_path = "data/cellml_exposures.json", csv_path="data
            ]}
        }' -o $(json_path)`)
 
-    s = read(json, String);
+    s = read(json_path, String);
     j = JSON3.read(read(json_path, String))
     df = DataFrame(jsontable(j.collection.links))
     select!(df, Not(:rel))
