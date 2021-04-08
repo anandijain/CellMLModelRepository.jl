@@ -4,7 +4,9 @@ module CellMLModelRepository
 using JSON3, JSONTables, CSV, DataFrames
 using Base.Threads, Downloads
 
-function cellml_metadata(;json_path = "data/cellml_exposures.json", csv_path="data/exposures_metadata.csv")
+const datadir = joinpath(@__DIR__, "../data/")
+
+function cellml_metadata(;json_path = "$(datadir)cellml_exposures.json", csv_path="$(datadir)exposures_metadata.csv")
     run(`curl -sL -H 'Accept: application/vnd.physiome.pmr2.json.1' https://models.physiomeproject.org/search -d '{
            "template": {"data": [
                {"name": "Subject", "value": "CellML Model"},
@@ -21,7 +23,7 @@ function cellml_metadata(;json_path = "data/cellml_exposures.json", csv_path="da
 end
 
 "anands preferred method of downloading. no boo boo html parsing"
-function cellml_models(;dir = "data/cellml_models/", csv_path="data/exposures_metadata.csv")
+function cellml_models(;dir = "$(datadir)cellml_models/", csv_path="$(datadir)exposures_metadata.csv")
     mkpath(dir)
     if isfile(csv_path) 
         df = CSV.read(csv_path, DataFrame)
