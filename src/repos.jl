@@ -1,50 +1,48 @@
+gethtmldoc(url) = parsehtml(String(HTTP.get(url).body))
 
-# too many gross dependencies. I'm hoping we can just use `curl_cellml_models`
-# script for shahriar
-# using HTTP, Cascadia, Gumbo
-# using OrdinaryDiffEq
+function cellml_repo_table()
+    url = "http://models.cellml.org/e/listing/full-list"
+    doc = gethtmldoc(url)
+    dts = eachmatch(sel"dt", doc.root)[2:end]
+    arr = []
+    for dt in dts
+        a = eachmatch(sel"a", dt)
+        length(a) != 1 && error("$dt err")
+        name = nodeText(a[1])
+        push!(arr, [name, a[1].attributes["href"]])
+    end
+    data = permutedims(reduce(hcat, arr))
+    [:name, :url] .=> eachcol(data)
+end
 
-# gethtmldoc(url) = parsehtml(String(HTTP.get(url).body))
+"used to get the workspace repo urls to git clone "
+function cellml_workspaces()
+    df = DataFrame(cellml_repo_table())
+    repos = []
+    for url in df.url
+        doc = gethtmldoc(url)
+        dds = eachmatch(sel"dd", doc.root)
+        dd = dds[2]
+        as = eachmatch(sel"a", dd)
+        if length(as) == 0
+            repo_url = missing
+        else
+            a = as[1]
+            repo_url = getattr(a, "href")
+        end
+        push!(repos, repo_url)
+    end
+    df[!, :repo]  = repos
+    df
+    end
 
-# function cellml_table()
-#     url = "http://models.cellml.org/e/listing/full-list"
-#     doc = gethtmldoc(url)
-#     dts = eachmatch(sel"dt", doc.root)[2:end]
-#     arr = []
-#     for dt in dts
-#         a = eachmatch(sel"a", dt)
-#         length(a) != 1 && error("$dt err")
-#         name = nodeText(a[1])
-#         push!(arr, [name, a[1].attributes["href"]])
-#     end
-#     data = permutedims(reduce(hcat, arr))
-#     [:name, :url] .=> eachcol(data)
-# end
-
-# "used to get the workspace repo urls to git clone "
-# function cellml_workspaces()
-#     df = DataFrame(cellml_table())
-#     repos = []
-#     for url in df.url
-#         doc = gethtmldoc(url)
-#         dds = eachmatch(sel"dd", doc.root)
-#         dd = dds[2]
-#         as = eachmatch(sel"a", dd)
-#         if length(as) == 0
-#             repo_url = missing
-#         else
-#             a = as[1]
-#             repo_url = getattr(a, "href")
-#         end
-#         push!(repos, repo_url)
-#     end
-#     df[!, :repo]  = repos
-#     df
-# end   
-
-
-function clone(repo)
-    run(`git clone $url`)
+function getem(df)
+    for url in unique(df.repo)
+        try 
+         run(`git clone $url $(CellMLModelRepository.datadir)repos/$(splitdir(url)[end])`)
+        catch e
+        end
+    end
 end
 
 function run_all_repos(root; skip=0)
@@ -53,7 +51,7 @@ function run_all_repos(root; skip=0)
     for d in readdir(root)
         path = joinpath(root, d)
         if isdir(path)
-            n += run_repo(path, res; dry_run=n<skip)
+            n += run_repo(path, res; dry_run=n < skip)
         end
     end
 end
@@ -76,7 +74,7 @@ function run_repo(repo, res; file_limit=500000, dry_run=false)
                 try
                     ml = CellModel(f)
                     k = 1
-                    prob  = ODEProblem(ml, (0,1000.0))
+                    prob  = ODEProblem(ml, (0, 1000.0))
                     k = 2
                     sol = solve(prob, TRBDF2(), dtmax=0.5)
                     k = 3
@@ -98,7 +96,7 @@ function run_repo(repo, res; file_limit=500000, dry_run=false)
 end
 
 function list_top_cellml_files(repo)
-    files = [f for f in readdir(repo) if endswith(f,".cellml")]
+    files = [f for f in readdir(repo) if endswith(f, ".cellml")]
 
     if length(files) == 1
         return joinpath.(repo, files)

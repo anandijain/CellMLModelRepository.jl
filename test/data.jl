@@ -1,21 +1,19 @@
 using CellMLModelRepository
+using CellMLToolkit
 using CSV, DataFrames
 using Test
 
+# curl
 df = cellml_metadata()
 @test df isa DataFrame
-
-# test suite stuff
 cellml_models()
 fns = readdir(joinpath(@__DIR__, "../data/cellml_models/"); join=true)[1:10] # only do 10
 @show fns 
 @test isfile(fns[1])
 
-using Pkg
-
-Pkg.add(url="https://github.com/anandijain/BioXMLSciMLTest.jl")
-using BioXMLSciMLTest
-
-files_to_sciml(fns; pmap=true)
-df = results_df()
+# clone
+mkpath("$(CellMLModelRepository.datadir)repos/")
+df = cellml_workspaces()
 @test df isa DataFrame
+cleandf = unique(strip.(dropmissing(df)), :repo)
+CSV.write("$(CellMLModelRepository.datadir)workspaces.csv", cleandf)
