@@ -1,4 +1,4 @@
-gethtmldoc(url) = parsehtml(String(HTTP.get(url).body))
+gethtmldoc(url) = Gumbo.parsehtml(String(HTTP.get(url).body))
 
 function cellml_repo_table()
     url = "http://models.cellml.org/e/listing/full-list"
