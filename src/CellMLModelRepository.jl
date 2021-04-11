@@ -9,7 +9,7 @@ module CellMLModelRepository
 using JSON3, JSONTables, CSV, DataFrames
 using Base.Threads, Downloads
 
-using HTTP, Cascadia, Gumbo
+using HTTP, Cascadia, Gumbo, EzXML
 using OrdinaryDiffEq
 
 const datadir = joinpath(@__DIR__, "../data/")

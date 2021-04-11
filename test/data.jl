@@ -6,13 +6,10 @@ using Base.Threads
 
 datadir = joinpath(@__DIR__, "../data/")
 
-@show pwd(), readdir()
-@show nthreads() "threads"
-
 # curl
 df = cellml_metadata()
 @test df isa DataFrame
-display(df)
+# display(df)
 
 # cellml_models()
 # fns = readdir(joinpath(@__DIR__, "../data/cellml_models/"); join=true)[1:10] # only do 10
@@ -30,7 +27,6 @@ workspaces_df = cellml_workspaces(reposdf)
 
 cleandf = unique(strip.(dropmissing(workspaces_df)), :repo)
 CSV.write("$(datadir)workspaces.csv", cleandf)
-display(cleandf)
 clone_physiome(p, cleandf)
 
 result_df = run_all_repos(p)
