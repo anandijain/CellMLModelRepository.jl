@@ -4,7 +4,6 @@ authors = ["Anand <anandj@uchicago.edu> and contributors"]
 version = "0.1.0"
 
 [deps]
-BioXMLSciMLTest = "e8628eb0-c811-44db-8319-b20caab5b6f1"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 Cascadia = "54eefc05-d75b-58de-a785-1a3403f0919f"
 CellMLToolkit = "03cb29e0-1ef4-4721-aa24-cf58a006576f"
