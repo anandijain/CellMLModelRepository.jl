@@ -10,7 +10,7 @@ using JSON3, JSONTables, CSV, DataFrames
 using Base.Threads, Downloads
 
 using HTTP, Cascadia, Gumbo, EzXML
-using OrdinaryDiffEq
+using CellMLToolkit, OrdinaryDiffEq
 
 const datadir = joinpath(@__DIR__, "../data/")
 mkpath(datadir)
