@@ -29,5 +29,5 @@ cleandf = unique(strip.(dropmissing(workspaces_df)), :repo)
 CSV.write("$(datadir)workspaces.csv", cleandf)
 clone_physiome(p, cleandf)
 
-result_df = run_all_repos(p)
+result_df = run_all_repos(p; limit=50)
 display(result_df)
