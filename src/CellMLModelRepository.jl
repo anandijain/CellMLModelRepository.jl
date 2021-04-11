@@ -19,6 +19,6 @@ include("curl.jl")
 include("repos.jl")
 
 export cellml_models, cellml_metadata
-export cellml_workspaces
+export cellml_repo_table, cellml_workspaces, clone_physiome, run_all_repos
 
 end
