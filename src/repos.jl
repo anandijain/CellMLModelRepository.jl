@@ -52,8 +52,13 @@ function run_all_repos(root, filelist=readdir(root); results_fn="results.csv",  
     df = DataFrame(file=String[], len=Int[], res=Int[], deps=Int[], msg=String[])
     n = 0
     i = 1
-    for d in filelist
+    @sync Threads.@threads for d in filelist
         path = joinpath(root, d)
+        
+        if occursin("Feto", d)
+            continue
+        end
+        
         if isdir(path)
             n += run_repo(path, df; dry_run=n < skip)
             CSV.write(results_fn, df)
