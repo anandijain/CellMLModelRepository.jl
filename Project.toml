@@ -17,6 +17,7 @@ JSONTables = "b9914132-a727-11e9-1322-f18e41205b0b"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
 
 [compat]
+Gumbo = "0.8"
 julia = "1"
 
 [extras]
