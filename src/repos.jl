@@ -51,7 +51,7 @@ end
 function run_all_repos(root, filelist=readdir(root); results_fn="results.csv",  skip=0, limit=typemax(Int))
     df = DataFrame(file=String[], len=Int[], res=Int[], deps=Int[], msg=String[])
     n = 0
-    i = 1
+    i = 0
     @sync Threads.@threads for d in filelist
         path = joinpath(root, d)
         
@@ -63,10 +63,10 @@ function run_all_repos(root, filelist=readdir(root); results_fn="results.csv",  
             n += run_repo(path, df; dry_run=n < skip)
             CSV.write(results_fn, df)
         end
-        i +=1 
         if i >= limit 
             break
         end
+        i +=1 
     end
     df
 end 
