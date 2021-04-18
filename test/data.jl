@@ -31,3 +31,5 @@ clone_physiome(p, cleandf)
 
 result_df = run_all_repos(p; limit=50)
 display(result_df)
+mkpath("logs")
+CSV.write("logs/physiome.csv", result_df)

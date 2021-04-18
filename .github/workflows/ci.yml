@@ -22,3 +22,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./lcov.info
+      - uses: actions/upload-artifact@v2
+        with:
+          name: physiome
+          path: CellMLModelRepository.jl/CellMLModelRepository.jl/test/logs/
