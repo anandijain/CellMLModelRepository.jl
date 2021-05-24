@@ -62,7 +62,7 @@ function run_all_repos(root, filelist=readdir(root); results_fn="results.csv",  
         
         if isdir(path)
             n += run_repo(path, df; dry_run=n < skip)
-            CSV.write(results_fn, df)
+            #CSV.write(results_fn, df)
         end
     end
     df
@@ -89,11 +89,11 @@ function run_repo(repo, df; file_limit=500000, dry_run=false)
                 else
                     ml = CellModel(f)
                     k = 1
-                    m = length(ml.doc.xmls)
-                    prob  = ODEProblem(ml, (0, 1000.0))
-                    k = 2
-                    sol = solve(prob, TRBDF2(), dtmax=0.5)
-                    k = 3
+                    m = length(ml.sys.eqs)
+                    #prob  = ODEProblem(ml, (0, 1000.0))
+                    #k = 2
+                    #sol = solve(prob, TRBDF2(), dtmax=0.5)
+                    #k = 3
                 end
             catch e
                 println(e)
