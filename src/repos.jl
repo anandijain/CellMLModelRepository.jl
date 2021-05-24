@@ -62,7 +62,7 @@ function run_all_repos(root, filelist=readdir(root); results_fn="results.csv",  
         
         if isdir(path)
             n += run_repo(path, df; dry_run=n < skip)
-            #CSV.write(results_fn, df)
+            CSV.write(results_fn, df)
         end
     end
     df
