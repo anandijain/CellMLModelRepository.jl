@@ -77,6 +77,7 @@ function run_repo(repo, df; file_limit=500000, dry_run=false)
         msg = "OK!"
         k = 0
         m = 0
+        n_eqn = 0
         if dry_run
             printstyled("\tskipping file $f ($l bytes)\n"; color=:blue)
         else
