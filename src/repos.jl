@@ -49,7 +49,7 @@ function clone_physiome(dir, df=cellml_workspaces())
 end
 
 function run_all_repos(root, filelist=readdir(root); results_fn="results.csv",  skip=0, limit=typemax(Int))
-    df = DataFrame(file=String[], len=Int[], res=Int[], deps=Int[], msg=String[])
+    df = DataFrame(file=String[], len=Int[], res=Int[], deps=Int[], depvars=Int[], msg=String[])
     n = 0
     i = 0
     filelist = filelist[1:limit]
@@ -77,6 +77,7 @@ function run_repo(repo, df; file_limit=500000, dry_run=false)
         msg = "OK!"
         k = 0
         m = 0
+        n_eqn = 0
         if dry_run
             printstyled("\tskipping file $f ($l bytes)\n"; color=:blue)
         else
@@ -90,6 +91,7 @@ function run_repo(repo, df; file_limit=500000, dry_run=false)
                     ml = CellModel(f)
                     k = 1
                     m = length(ml.doc.xmls)
+                    n_eqn = length(ml.sys.eqs)
                     prob  = ODEProblem(ml, (0, 1000.0))
                     k = 2
                     sol = solve(prob, TRBDF2(), dtmax=0.5)
@@ -99,7 +101,7 @@ function run_repo(repo, df; file_limit=500000, dry_run=false)
                 println(e)
                 msg = string(e)
             finally
-                push!(df, (f, l, k, m, msg))
+                push!(df, (f, l, k, m, n_eqn, msg))
                 printstyled("$f done with a code $k\n"; color=:green)
             end
         end
